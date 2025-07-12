@@ -1,0 +1,61 @@
+[project]
+name = "lfc-diff-tool"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "click>=8.2.1",
+    "colorama>=0.4.6",
+    "rich>=14.0.0",
+    "streamlit>=1.46.1",
+    "typing-extensions>=4.14.1",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.12.3"]
+
+[project.scripts]
+lint = "ruff check ."
+lint-fix = "ruff check --fix ."
+format = "ruff format ."
+
+[tool.ruff]
+target-version = "py311"
+line-length = 119
+exclude = [".env", ".venv", "docs", "logs", "reports", "scripts", "__pycache__"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint]
+unfixable = [
+    "E501", # line-too-long
+    "F401", # unused-import
+]
+
+dummy-variable-rgx = "^_$"
+select = [
+    "F",  # PyFlakes
+    "E",  # Pycodestyle Error
+    "W",  # Pycodestyle Warning
+    "I",  # Isort
+    "UP", # Pyupgrade
+]
+ignore = [
+    "F841", # Avoid enforcing unused variables
+    "W191", # tab-indentation
+    "E111", # indentation-with-invalid-multiple
+    "E114", # indentation-with-invalid-multiple-comment
+    "E117", # over-indented
+]
+
+[tool.ruff.lint.isort]
+force-single-line = false
+force-wrap-aliases = false
+lines-after-imports = -1
+lines-between-types = 1
+split-on-trailing-comma = true
