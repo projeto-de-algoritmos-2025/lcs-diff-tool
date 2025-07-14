@@ -1,13 +1,21 @@
-# LCS Diff Tool
+# LCS Diff Visualizer
 
 Um visualizador de diferenças entre arquivos que utiliza Programação Dinâmica (algoritmo LCS - Longest Common Subsequence) para identificar e destacar mudanças de forma inteligente.
+
+![Visualização do Diff](assets/capa.png)
+
+## Alunos
+
+| Matrícula | Aluno              |
+| --------- | ------------------ |
+| 150125682 | Flavio Vieira Leao |
 
 ## Sobre o Projeto
 
 Este projeto implementa um comparador de arquivos que:
 
 - Usa o algoritmo **LCS (Longest Common Subsequence)** com programação dinâmica
-- Oferece visualização tanto no **terminal** quanto via **Streamlit**
+- Oferece visualização via **Streamlit**
 - Destaca adições, remoções e linhas inalteradas com cores diferentes
 - Calcula estatísticas detalhadas das diferenças
 
@@ -17,8 +25,18 @@ Este projeto implementa um comparador de arquivos que:
 - **Visualização colorida** no terminal e interface web
 - **Estatísticas detalhadas** (linhas adicionadas, removidas, modificadas)
 - **Performance otimizada** com memoização
-- **Múltiplos formatos** de saída (terminal, web, HTML)
+- **Múltiplos formatos** de saída (web, HTML)
 - **Interface responsiva** no Streamlit
+
+## Screenshots
+
+    Exemplo comparando dois arquivos .yml
+
+![Visualização do Diff](assets/results.png)
+
+    Estatísticas do Algoritmo LCS
+
+![Visualização do Diff](assets/statistics.png)
 
 ## Como Funciona
 
