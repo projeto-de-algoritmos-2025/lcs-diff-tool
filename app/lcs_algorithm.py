@@ -24,11 +24,14 @@ class DiffOperation:
 
 
 class LCSAlgorithm:
-    def __init__(self, enable_memoization):
+    def __init__(self, enable_memoization=True):
         self.enable_memoization = enable_memoization
         self._memo_cache = {}
 
-    def compute_lcs_length(self, seq1, seq2):
+    def compute_lcs_length_optimized(self, seq1, seq2):
+        if len(seq1) < len(seq2):
+            seq1, seq2 = seq2, seq1
+
         m, n = len(seq1), len(seq2)
         prev = [0] * (n + 1)
         curr = [0] * (n + 1)
@@ -39,18 +42,20 @@ class LCSAlgorithm:
                     curr[j] = prev[j - 1] + 1
                 else:
                     curr[j] = max(prev[j], curr[j - 1])
-
             prev, curr = curr, [0] * (n + 1)
 
         return prev[n]
 
-    def compute_lcs_matrix(self, seq1, seq2):
+    def compute_lcs_matrix(self, seq1, seq2) -> list[list[int]]:
         m, n = len(seq1), len(seq2)
-
         dp = [[0] * (n + 1) for _ in range(m + 1)]
 
         for i, j in itertools.product(range(1, m + 1), range(1, n + 1)):
-            dp[i][j] = dp[i - 1][j - 1] + 1 if seq1[i - 1] == seq2[j - 1] else max(dp[i - 1][j], dp[i][j - 1])
+            if seq1[i - 1] == seq2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+
         return dp
 
     def compute_lcs_recursive(self, seq1, seq2, i=None, j=None):
@@ -138,7 +143,7 @@ class LCSAlgorithm:
 
         return operations[::-1]
 
-    def get_statistics(self, operations: list[DiffOperation]):
+    def get_statistics(self, operations):
         stats = {"total_lines": len(operations), "lines_kept": 0, "lines_inserted": 0, "lines_deleted": 0}
 
         for op in operations:
@@ -151,10 +156,54 @@ class LCSAlgorithm:
 
         return stats
 
+    def get_similarity_percentage(self, seq1, seq2):
+        if not seq1 and not seq2:
+            return 100.0
+
+        lcs_length = self.compute_lcs_length_optimized(seq1, seq2)
+        max_length = max(len(seq1), len(seq2))
+
+        return (lcs_length / max_length) * 100.0 if max_length > 0 else 0.0
+
     def clear_cache(self) -> None:
         self._memo_cache.clear()
 
+    def get_performance_info(self, seq1, seq2):
+        m, n = len(seq1), len(seq2)
 
-def quick_diff(lines1, lines2):
-    lcs = LCSAlgorithm()
+        return {
+            "time_complexity": f"O({m} × {n})",
+            "space_complexity": f"O({m} × {n})",
+            "matrix_size": m * n,
+            "memoization_enabled": self.enable_memoization,
+            "cache_size": len(self._memo_cache) if self.enable_memoization else 0,
+        }
+
+
+def quick_diff(lines1, lines2, enable_memoization):
+    lcs = LCSAlgorithm(enable_memoization=enable_memoization)
     return lcs.compute_diff_operations(lines1, lines2)
+
+
+def compare_files(file1_path, file2_path, ignore_whitespace=False):
+    try:
+        with open(file1_path, encoding="utf-8") as f1:
+            lines1 = f1.read().splitlines()
+
+        with open(file2_path, encoding="utf-8") as f2:
+            lines2 = f2.read().splitlines()
+
+        if ignore_whitespace:
+            lines1 = [line.strip() for line in lines1]
+            lines2 = [line.strip() for line in lines2]
+
+        lcs = LCSAlgorithm()
+        operations = lcs.compute_diff_operations(lines1, lines2)
+        stats = lcs.get_statistics(operations)
+
+        return operations, stats
+
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"Arquivo não encontrado: {e}")
+    except UnicodeDecodeError as e:
+        raise UnicodeDecodeError(f"Erro de codificação: {e}")
